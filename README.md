@@ -5,6 +5,7 @@ JSON5 parser written in PHP. Based directly off of [https://github.com/json5/jso
 ## About JSON5 
 
 Official website: http://json5.org/
+
 Official repository in javascript: https://github.com/json5/json5
 
 ## Example
@@ -13,10 +14,12 @@ There are two ways to use this library.
 
 1. Copy src/json5.php to your project, write this:
 
+```php
     require('json5.php');
     $str = "{foo: 'bar',while: true}";
     $obj = json5_decode($str);
     var_dump($obj);
+```
     
 2. Install by composer (TBA)
     
