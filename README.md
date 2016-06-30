@@ -12,15 +12,13 @@ Official repository in javascript: https://github.com/json5/json5
 
 There are two ways to use this library.
 
-1. Copy src/json5.php to your project, write this:
-
+Copy src/json5.php to your project, write this:
 ```php
     require('json5.php');
     $str = "{foo: 'bar',while: true}";
     $obj = json5_decode($str);
     var_dump($obj);
 ```
-    
-2. Install by composer (TBA)
+Install by composer (TBA)
     
 ## TEST (TBA)
