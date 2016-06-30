@@ -130,18 +130,14 @@ function json5_decode($json5)
         return $key;
     };
 
-    $Infinity = new stdClass();
+    // todo: what is NaN equivalent in php?
     $NaN = new stdClass();
 
     $isNaN = function ($obj) use ($NaN) {
         return $obj === $NaN;
     };
 
-    $isFinite = function ($number) use ($Infinity) {
-        return $number !== $Infinity;
-    };
-
-    $word = function () use (&$ch, $next, $error, $renderChar, &$Infinity, &$NaN) {
+    $word = function () use (&$ch, $next, $error, $renderChar, &$NaN) {
 
 // true, false, or null.
 
@@ -174,7 +170,7 @@ function json5_decode($json5)
                 $next('i');
                 $next('t');
                 $next('y');
-                return $Infinity;
+                return INF;
             case 'N':
                 $next('N');
                 $next('a');
@@ -183,7 +179,7 @@ function json5_decode($json5)
         }
         $error("Unexpected " . $renderChar($ch));
     };
-    $number = function () use (&$ch, $word, $error, $next, $isNaN, $isFinite, $Infinity, $NaN) {
+    $number = function () use (&$ch, $word, $error, $next, $isNaN, $NaN) {
 
 // Parse a number value.
 
@@ -201,7 +197,7 @@ function json5_decode($json5)
         if ($ch === 'I') {
             $number = $word();
             // if (typeof number !== 'number' || isNaN(number)) {
-            if (!($number === $NaN || $number === $Infinity)) {
+            if (!($number === $NaN || $number === INF)) {
                 $error('Unexpected word for number');
             }
             return ($sign === '-') ? -$number : $number;
@@ -268,14 +264,14 @@ function json5_decode($json5)
             $number = +$string;
         }
 
-        if (!$isFinite($number)) {
+        if (is_infinite($number)) {
             $error("Bad number");
         } else {
             return $number;
         }
     };
 
-    $string = function () use (&$ch, $next, $peek, $escapee, $error, $isFinite) {
+    $string = function () use (&$ch, $next, $peek, $escapee, $error) {
 
 // Parse a string value.
 
@@ -301,7 +297,7 @@ function json5_decode($json5)
                         for ($i = 0; $i < 4; $i += 1) {
                             $hex = intval($next(), 16);
                             $ts .= $ch;
-                            if (!$isFinite($hex)) {
+                            if (is_infinite($hex)) {
                                 break;
                             }
                             $uffff = $uffff * 16 + $hex;
