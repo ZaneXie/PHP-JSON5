@@ -129,17 +129,15 @@ function json5_decode($json5)
 
         return $key;
     };
-        
-    $Infinity = new stdClass();
-    $NaN  =new stdClass();
 
-    $isNaN = function($obj)use($NaN)
-    {
+    $Infinity = new stdClass();
+    $NaN = new stdClass();
+
+    $isNaN = function ($obj) use ($NaN) {
         return $obj === $NaN;
     };
 
-    $isFinite = function($number)use($Infinity)
-    {
+    $isFinite = function ($number) use ($Infinity) {
         return $number !== $Infinity;
     };
 
@@ -203,7 +201,7 @@ function json5_decode($json5)
         if ($ch === 'I') {
             $number = $word();
             // if (typeof number !== 'number' || isNaN(number)) {
-            if(!($number === $NaN || $number === $Infinity)){
+            if (!($number === $NaN || $number === $Infinity)) {
                 $error('Unexpected word for number');
             }
             return ($sign === '-') ? -$number : $number;
@@ -298,16 +296,23 @@ function json5_decode($json5)
                 } else if ($ch === '\\') {
                     $next();
                     if ($ch === 'u') {
+                        $ts = '\\u';
                         $uffff = 0;
                         for ($i = 0; $i < 4; $i += 1) {
                             $hex = intval($next(), 16);
+                            $ts .= $ch;
                             if (!$isFinite($hex)) {
                                 break;
                             }
                             $uffff = $uffff * 16 + $hex;
                         }
                         // string += String.fromCharCode(uffff);
-                        $string .= mb_convert_encoding('&#' . intval($uffff) . ';', 'UTF-8', 'HTML-ENTITIES');
+                        if (extension_loaded('mbstring')) {
+                            $string .= mb_convert_encoding('&#' . intval($uffff) . ';', 'UTF-8', 'HTML-ENTITIES');
+                        } else {
+                            $string .= $ts;
+                            error_log('mbstring extension not found, decode string failed;');
+                        }
                     } else if ($ch === "\r") {
                         if ($peek() === "\n") {
                             $next();
@@ -410,13 +415,14 @@ function json5_decode($json5)
             }
         }
     };
-    
-    $value = function(){};         // Place holder for the value function.
+
+    $value = function () {
+    };         // Place holder for the value function.
     $array = function () use (&$ch, $next, $white, $error, &$value) {
 
 // Parse an array value.
 
-        $array = [];
+        $array = array();
 
         if ($ch === '[') {
             $next('[');
