@@ -52,7 +52,7 @@ function json5_decode($json5)
     $renderChar = function ($chr) {
         return $chr === '' ? 'EOF' : "'" . $chr . "'";
     };
-    $error = function ($m) use ($lineNumber, $columnNumber, $at, $text) {
+    $error = function ($m) use (&$lineNumber, &$columnNumber, &$at, $text) {
 
 // Call error when something is wrong.
         $error = new SyntaxError();
