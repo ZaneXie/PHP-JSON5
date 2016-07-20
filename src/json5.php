@@ -233,7 +233,7 @@ function json5_decode($json5)
                 }
                 if ($ch === '.') {
                     $string .= '.';
-                    while ($next() && $ch >= '0' && $ch <= '9') {
+                    while ($next() != null && $ch >= '0' && $ch <= '9') {
                         $string .= $ch;
                     }
                 }
