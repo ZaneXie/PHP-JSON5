@@ -423,7 +423,7 @@ function json5_decode($json5)
         if ($ch === '[') {
             $next('[');
             $white();
-            while ($ch) {
+            while ($ch != null) {
                 if ($ch === ']') {
                     $next(']');
                     return $array;   // Potentially empty array
