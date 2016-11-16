@@ -347,7 +347,7 @@ function json5_decode($json5)
                 $next();
                 return;
             }
-        } while ($ch);
+        } while ($ch != null);
     };
 
     $blockComment = function () use (&$ch, $error, $next) {
@@ -370,7 +370,7 @@ function json5_decode($json5)
                     return;
                 }
             }
-        } while ($ch);
+        } while ($ch != null);
 
         $error("Unterminated block comment");
     };
@@ -401,7 +401,7 @@ function json5_decode($json5)
 // This works since regular expressions are not valid JSON(5), but this will
 // break if there are other valid values that begin with a / character!
 
-        while ($ch) {
+        while ($ch != null){
             if ($ch === '/') {
                 $comment();
             } else if (array_search($ch, $ws) !== false) {
@@ -459,7 +459,7 @@ function json5_decode($json5)
         if ($ch === '{') {
             $next('{');
             $white();
-            while ($ch) {
+            while ($ch != null){
                 if ($ch === '}') {
                     $next('}');
                     return $object;   // Potentially empty object
